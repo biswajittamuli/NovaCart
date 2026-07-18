@@ -5,6 +5,7 @@ from app.core.enums import SortOrder
 from app.db.database import get_db
 from app.services.product_service import product_service
 from app.schemas.product import ProductCreate, ProductResponse, ProductUpdate
+from app.core.auth import require_admin
 
 router = APIRouter(
     prefix="/products",
@@ -60,10 +61,11 @@ def update_product(
         product_update,
     )
 
-@router.delete("/{product_id}",response_model=ProductResponse)
+@router.delete("/{product_id}")
 def soft_delete_product(
-    product_id : int,
-    db : Session= Depends(get_db)
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(require_admin),
 ):
     return product_service.soft_delete_product(
         db,
