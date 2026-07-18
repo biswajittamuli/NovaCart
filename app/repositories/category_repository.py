@@ -11,6 +11,11 @@ class CategoryRepository:
         db.refresh(category)
         return category
     
+    def get_category_by_id(self,db: Session,category_id: int):
+        return(
+            db.query(Category).filter_by(id=category_id).first())
+        
+    
 
 
 

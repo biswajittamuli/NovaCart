@@ -1,4 +1,5 @@
 from pydantic import  BaseModel
+from typing import Optional
 from decimal import Decimal
 
 class ProductCreate(BaseModel):
@@ -18,5 +19,11 @@ class ProductResponse(ProductCreate):
         "from_attributes": True
     }
     
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[Decimal] = None
+    brand: Optional[str] = None
+    category_id: Optional[int] = None   
 
 
