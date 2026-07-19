@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from sqlalchemy.orm import relationship
 
 from sqlalchemy import (
     Boolean,
@@ -54,6 +55,10 @@ class User(Base):
         Boolean,
         default=True,
         nullable=False,
+    )
+    
+    orders: Mapped[list["Order"]] = relationship(
+    back_populates="user",
     )
 
     created_at: Mapped[datetime] = mapped_column(

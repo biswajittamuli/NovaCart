@@ -9,8 +9,7 @@ class ProductRepository:
 
     def create_product(self, db: Session, product: Product):
         db.add(product)
-        db.commit()
-        db.refresh(product)
+        db.flush()
         return product
 
     def get_product_by_id(self, db: Session, product_id: int):
@@ -69,8 +68,7 @@ class ProductRepository:
 
     def update_product(self, db: Session, product: Product):
         db.add(product)
-        db.commit()
-        db.refresh(product)
+        db.flush()
         return product
 
     def soft_delete_product(self, db: Session, product: Product):
@@ -79,8 +77,7 @@ class ProductRepository:
         product.is_active = False
         # setattr(product, "is_active", False)  # Alternative using setattr
 
-        db.commit()
-        db.refresh(product)
+        db.flush()
         return product
 
 

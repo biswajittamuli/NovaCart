@@ -15,7 +15,6 @@ class UserService:
         db: Session,
         user_create: UserCreate,
     ):
-
         # Check if email already exists
         existing_user = user_repository.get_user_by_email(
             db,
@@ -34,17 +33,33 @@ class UserService:
             password_hash=hash_password(user_create.password),
         )
 
-        return user_repository.create_user(
-            db,
-            user,
-        )
+        try:
+            user = user_repository.create_user(
+                db,
+                user,
+            )
+
+            db.commit()
+            db.refresh(user)
+
+            return user
+
+        except HTTPException:
+            db.rollback()
+            raise
+
+        except Exception:
+            db.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error",
+            )
 
     def get_user_by_id(
         self,
         db: Session,
         user_id: int,
     ):
-
         user = user_repository.get_user_by_id(
             db,
             user_id,
@@ -69,7 +84,6 @@ class UserService:
         db: Session,
         user_id: int,
     ):
-
         user = user_repository.get_user_by_id(
             db,
             user_id,
@@ -87,31 +101,45 @@ class UserService:
                 detail="User already inactive",
             )
 
-        return user_repository.soft_delete_user(
-            db,
-            user,
-        )
+        try:
+            user = user_repository.soft_delete_user(
+                db,
+                user,
+            )
 
+            db.commit()
+            db.refresh(user)
+
+            return user
+
+        except HTTPException:
+            db.rollback()
+            raise
+
+        except Exception:
+            db.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error",
+            )
 
     def authenticate_user(
-    self,
-    db: Session,
-    email: str,
-    password: str,
+        self,
+        db: Session,
+        email: str,
+        password: str,
     ):
         print("Email received:", repr(email))
-        
 
         user = user_repository.get_user_by_email(db, email)
 
         print("User found:", user)
-    
 
         if not user:
             raise HTTPException(
-            status_code=401,
-            detail="Invalid email or password",
-        )
+                status_code=401,
+                detail="Invalid email or password",
+            )
 
         print("Stored hash:", user.password_hash)
 
@@ -120,11 +148,12 @@ class UserService:
 
         if not is_valid:
             raise HTTPException(
-            status_code=401,
-            detail="Invalid email or password",
-        )
+                status_code=401,
+                detail="Invalid email or password",
+            )
 
         return user
 
 
+# Singleton instance
 user_service = UserService()

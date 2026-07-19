@@ -11,8 +11,7 @@ class UserRepository:
         user: User,
     ) -> User:
         db.add(user)
-        db.commit()
-        db.refresh(user)
+        db.flush()
         return user
 
     def get_user_by_id(
@@ -53,8 +52,7 @@ class UserRepository:
         user: User,
     ) -> User:
         db.add(user)
-        db.commit()
-        db.refresh(user)
+        db.flush()
         return user
 
     def soft_delete_user(
@@ -63,8 +61,7 @@ class UserRepository:
         user: User,
     ) -> User:
         user.is_active = False
-        db.commit()
-        db.refresh(user)
+        db.flush()
         return user
 
 

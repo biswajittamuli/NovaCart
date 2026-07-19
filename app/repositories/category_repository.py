@@ -7,8 +7,7 @@ class CategoryRepository:
     
     def create_category(self,db: Session,category: Category):
         db.add(category)
-        db.commit()
-        db.refresh(category)
+        db.flush()
         return category
     
     def get_category_by_id(self,db: Session,category_id: int):

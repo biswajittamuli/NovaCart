@@ -30,24 +30,43 @@ class ProductService:
             category_id=product_create.category_id,
             sku=sku,
         )
+        
+        try:
+            product = product_repository.create_product(
+                db,
+                product,
+            )
 
-        return product_repository.create_product(db, product)
+            db.commit()
+            db.refresh(product)
 
-    def get_all_products(self, db: Session,page:int,page_size:int,brand:str | None,category_id:int |None,sort_by: str | None,order: SortOrder,search: str | None,):
+            return product
+
+        except HTTPException:
+            db.rollback()
+            raise
+
+        except Exception:
+            db.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error",
+            )
+
+    def get_all_products(self, db: Session, page: int, page_size: int, brand: str | None, category_id: int | None, sort_by: str | None, order: SortOrder, search: str | None):
         allowed_sort_fields = {
-                        "name",
-                        "price",
-                        "brand",
-                        
-}
+            "name",
+            "price",
+            "brand",
+        }
         if sort_by and sort_by not in allowed_sort_fields:
             raise HTTPException(
-        status_code=400,
-        detail="Invalid sort field",
-    )
-        offset:int=(page-1)*page_size
-        limit:int=page_size
-        return product_repository.get_all_products(db,offset,limit,brand,category_id,sort_by,order,search)
+                status_code=400,
+                detail="Invalid sort field",
+            )
+        offset: int = (page - 1) * page_size
+        limit: int = page_size
+        return product_repository.get_all_products(db, offset, limit, brand, category_id, sort_by, order, search)
 
     def get_product_by_id(self, db: Session, product_id: int):
         product = product_repository.get_product_by_id(db, product_id)
@@ -93,27 +112,64 @@ class ProductService:
             setattr(product, key, value)
 
         # Save changes
-        updated_product = product_repository.update_product(db, product)
-        return updated_product
-    
-    def soft_delete_product(self, db :Session, product_id :int):
+        try:
+            updated_product = product_repository.update_product(
+                db,
+                product,
+            )
+
+            db.commit()
+            db.refresh(updated_product)
+
+            return updated_product
+
+        except HTTPException:
+            db.rollback()
+            raise
+
+        except Exception:
+            db.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error",
+            )
+
+    def soft_delete_product(self, db: Session, product_id: int):
         product = product_repository.get_product_by_id(db, product_id)
         if not product:
             raise HTTPException(
                 status_code=404,
                 detail="Product not found",
             )
-        
+
         if product.is_active is False:
-             raise HTTPException(
+            raise HTTPException(
                 status_code=409,
                 detail="Product is already deleted",
             )
-        
-        product= product_repository.soft_delete_product(db,product)
-        return product
-                 
-             
-        
+
+        try:
+            product = product_repository.soft_delete_product(
+                db,
+                product,
+            )
+
+            db.commit()
+            db.refresh(product)
+
+            return product
+
+        except HTTPException:
+            db.rollback()
+            raise
+
+        except Exception:
+            db.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error",
+            )
+
+
 # Singleton instance
 product_service = ProductService()

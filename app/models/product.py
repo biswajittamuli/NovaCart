@@ -10,6 +10,11 @@ class Product(Base):
     description :Mapped[str] = mapped_column(Text,nullable=False)
     price:Mapped[Decimal] = mapped_column(Numeric(10,2),nullable=False)
     brand:Mapped[str] = mapped_column(String(100),nullable=False)
+    order_items: Mapped[list["OrderItem"]] = relationship(
+    back_populates="product",)
+    stock: Mapped[int] = mapped_column(
+    default=0,
+    nullable=False,)
     sku:Mapped[str] = mapped_column(String(30),unique=True,index=True,nullable=False)
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True,nullable=False)

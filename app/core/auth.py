@@ -8,7 +8,7 @@ from app.core.config import settings
 from app.db.database import get_db
 from app.repositories.user_repository import user_repository
 
-SSECRET_KEY = settings.jwt_secret_key
+SECRET_KEY = settings.jwt_secret_key
 ALGORITHM = settings.jwt_algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
