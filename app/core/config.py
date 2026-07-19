@@ -1,11 +1,16 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
     app_name : str
     app_version : str
     database_url : str
     secret_key : str
     algorithm : str
+    access_token_expire_minutes: int
+    
+    jwt_secret_key: str
+    jwt_algorithm: str
     access_token_expire_minutes: int
 
     model_config = SettingsConfigDict(
