@@ -11,7 +11,7 @@ class OrderRepository:
         order: Order,
     ) -> Order:
         db.add(order)
-        db.flush()          # Gets order.id without committing
+        db.flush()
         return order
 
     def update_order(

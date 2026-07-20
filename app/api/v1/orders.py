@@ -54,6 +54,7 @@ def get_order(
     return order_service.get_order_by_id(
         db,
         order_id,
+        current_user,          # ← Added current_user
     )
 
 
