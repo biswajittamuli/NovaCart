@@ -60,6 +60,9 @@ class User(Base):
     orders: Mapped[list["Order"]] = relationship(
     back_populates="user",
     )
+    cart: Mapped["Cart"] = relationship(
+    back_populates="user",
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,

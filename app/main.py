@@ -5,6 +5,9 @@ from app.api.v1.categories import router as category_router
 from app.api.v1.users import router as users_router
 from app.api.v1.orders import router as orders_router
 from app.api.v1.inventory import router as inventory_router
+from app.api.v1.carts import router as cart_router
+from app.api.v1.payments import router as payment_router
+
 
 app = FastAPI(
     title = settings.app_name,
@@ -17,7 +20,8 @@ app.include_router(category_router)
 app.include_router(users_router)
 app.include_router(orders_router)
 app.include_router(inventory_router)
- 
+app.include_router(cart_router)
+app.include_router(payment_router) 
 
 @app.get("/")
 def root():

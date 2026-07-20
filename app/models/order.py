@@ -64,6 +64,11 @@ class Order(Base):
         back_populates="order",
         cascade="all, delete-orphan",
     )
+    payment: Mapped["Payment"] = relationship(
+    back_populates="order",
+    uselist=False,
+    )
+    
 
 
 class OrderItem(Base):
@@ -102,6 +107,8 @@ class OrderItem(Base):
     order: Mapped["Order"] = relationship(
         back_populates="items",
     )
+    
+   
 
     product: Mapped["Product"] = relationship(
         back_populates="order_items",
