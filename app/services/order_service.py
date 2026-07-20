@@ -143,6 +143,7 @@ class OrderService:
         self,
         db: Session,
         order_id: int,
+        current_user: User,
     ):
 
         order = order_repository.get_order_by_id(
@@ -156,6 +157,15 @@ class OrderService:
                 detail="Order not found",
             )
 
+        if (
+            order.user_id != current_user.id
+            and current_user.role != UserRole.ADMIN
+        ):
+            raise HTTPException(
+                status_code=403,
+                detail="Access denied",
+            )
+
         if order.status == OrderStatus.CANCELLED:
             raise HTTPException(
                 status_code=400,
@@ -164,11 +174,13 @@ class OrderService:
 
         try:
             for item in order.items:
+
                 product = product_repository.get_product_by_id(
                     db,
                     item.product_id,
                 )
-                if product:  # Safety check
+
+                if product:
                     product.stock += item.quantity
 
             order.status = OrderStatus.CANCELLED

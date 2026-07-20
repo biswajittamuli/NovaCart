@@ -67,4 +67,5 @@ def cancel_order(
     return order_service.cancel_order(
         db,
         order_id,
+        current_user,      # ← Added
     )

@@ -79,6 +79,34 @@ class ProductRepository:
 
         db.flush()
         return product
+    
+    def get_low_stock_products(
+    self,
+    db: Session,
+    threshold: int = 10,
+):
+        return (
+        db.query(Product)
+        .filter(
+            Product.stock <= threshold,
+            Product.is_active == True,
+        )
+        .all()
+    )
+
+
+    def get_out_of_stock_products(
+    self,
+    db: Session,
+):
+        return (
+        db.query(Product)
+        .filter(
+            Product.stock == 0,
+            Product.is_active == True,
+        )
+        .all()
+    )
 
 
 # Repository instance

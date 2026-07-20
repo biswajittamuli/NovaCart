@@ -4,6 +4,7 @@ from app.api.v1.products import router as product_router
 from app.api.v1.categories import router as category_router
 from app.api.v1.users import router as users_router
 from app.api.v1.orders import router as orders_router
+from app.api.v1.inventory import router as inventory_router
 
 app = FastAPI(
     title = settings.app_name,
@@ -15,6 +16,7 @@ app.include_router(product_router)
 app.include_router(category_router)
 app.include_router(users_router)
 app.include_router(orders_router)
+app.include_router(inventory_router)
  
 
 @app.get("/")
